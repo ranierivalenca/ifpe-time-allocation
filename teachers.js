@@ -16,7 +16,7 @@ let d = (...args) => {
     })
     args.forEach((arg, i) => {
         let {score, to} = arg
-        let from = i == 0 ? 7 : args[i - 1].to
+        let from = i == 0 ? 7 : args[i - 1].to + 0.01
         day.push(s(score, from, to))
     })
     return day

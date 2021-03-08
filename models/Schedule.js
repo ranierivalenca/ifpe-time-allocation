@@ -2,8 +2,12 @@ require('../utils')
 
 
 class Day {
-    constructor(number_of_slots) {
+    constructor(index, slots) {
+        let number_of_slots = slots.length
+
+        this.index = index
         this.slots = Array(number_of_slots).fill(null)
+        this.times = slots
     }
 
     isAvailableFor(number_of_slots) {
@@ -77,15 +81,28 @@ class Day {
         }
         return false
     }
+
+    score() {
+        let score = 0;
+        for (let i = 0; i < this.slots.length; i++) {
+            let slot = this.slots[i]
+            let times = this.times[i]
+            if (slot) {
+                let teachers = slot.discipline.getTeachers()
+                for (let teacher of teachers) {
+                    score += teacher.getScoreFor(this.index, times[0], times[1])
+                }
+            }
+        }
+        return score
+    }
 }
 
 class Schedule {
     constructor(klass, days = 5) {
-        let number_of_slots = klass.slots.length
-
         this.class = klass
-        this.days = Array(days).fill(null).map(day => {
-            return new Day(number_of_slots)
+        this.days = Array(days).fill(null).map((day, index) => {
+            return new Day(index, klass.slots)
         })
     }
 
@@ -132,6 +149,14 @@ class Schedule {
         return block
     }
 
+    score() {
+        let score = 0
+        for (let day of this.days) {
+            score += day.score()
+        }
+        return score
+    }
+
     printTable() {
         let table = []
         for (let day of this.days) {
@@ -139,7 +164,7 @@ class Schedule {
             for (let slot of day.slots) {
                 day_table.push(slot)
             }
-            day_table = day_table.map(d => d ? d.discipline.code : null)
+            day_table = day_table.map((block, index) => block ? block.discipline.tableString(day, index) : null)
             table.push(day_table)
         }
         let inverse_table = []

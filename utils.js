@@ -31,3 +31,14 @@ Array.prototype.choice = function(pop = false) {
 Array.prototype.randIndex = function() {
     return intRnd(this.length)
 }
+
+Array.prototype.sum = function() {
+    let sum = 0
+    for (let el of this) {
+        if (+el == NaN) {
+            throw `${el} is not a valid number`
+        }
+        sum += +el
+    }
+    return sum
+}
