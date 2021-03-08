@@ -42,6 +42,14 @@ class Class {
         let slots = []
         return this.course.getSlots(this.shift)
     }
+
+    getDisciplineBlocks() {
+        let blocks = []
+        for (let discipline of this.disciplines) {
+            blocks.push(...discipline.blocks)
+        }
+        return blocks
+    }
 }
 
 module.exports = Class
