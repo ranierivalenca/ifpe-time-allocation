@@ -31,6 +31,14 @@ class Schedule {
         // process.exit()
     }
 
+    reallocate() {
+        // reset days
+        this.days = Array(this.days.length).fill(null).map((day, index) => {
+            return new Day(index, this.class.slots)
+        })
+        this.allocate()
+    }
+
     findDayFor(block) {
         let number_of_slots = block.slots
         let discipline_code = block.discipline.code
@@ -59,6 +67,43 @@ class Schedule {
             score += day.score()
         }
         return score
+    }
+
+    hasConflictWith(that) {
+        if (this.class.endTime() < that.class.startTime() || this.class.startTime() > that.class.endTime()) {
+            return false
+        }
+        for (let i = 0; i < this.days.length; i++) {
+            let this_day = this.days[i]
+            let that_day = that.days[i]
+            if (this_day.hasConflictWith(that_day)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    resolveConflictsWith(that) {
+        let deallocated = []
+        for (let i = 0; i < this.days.length; i++) {
+            let this_day = this.days[i]
+            let that_day = that.days[i]
+
+            let blocks_with_conflict = this_day.getConflictsWith(that_day)
+            if (!blocks_with_conflict.length) {
+                continue
+            }
+
+            let disciplines = new Set()
+            blocks_with_conflict.forEach(block => {
+                disciplines.add(block.discipline)
+            })
+
+            for (let discipline of disciplines) {
+                deallocated.push(this_day.deallocate(discipline))
+            }
+        }
+        this.allocate(deallocated)
     }
 
     printTable() {

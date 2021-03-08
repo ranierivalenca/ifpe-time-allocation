@@ -26,7 +26,8 @@ class Class {
         for (let discipline of all_disciplines) {
             let teachers = disc_teachers[discipline.code]
             if (!teachers) {
-                console.warn(`Discipline ${discipline.code} in course ${this.course.code} has no teacher`)
+                // console.warn(`Discipline ${discipline.code} in class ${this.code} has no teacher`)
+                console.warn(`Class ${this.code}: discipline ${discipline.code} has no teacher`)
                 continue
             }
             teachers = Array.isArray(teachers) ? teachers : [teachers]
@@ -49,6 +50,14 @@ class Class {
             blocks.push(...discipline.blocks)
         }
         return blocks
+    }
+
+    startTime() {
+        return this.slots[0][0]
+    }
+
+    endTime() {
+        return this.slots[0][this.slots[0].length]
     }
 }
 

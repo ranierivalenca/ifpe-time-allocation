@@ -93,6 +93,69 @@ class Day {
         }
         return score
     }
+
+    hasConflictWith(that) {
+        // for (let i = 0; i < this.slots.length; i++) {
+        //     for (let j = 0; j < that.slots.length; j++) {
+        //         let this_time = this.times[i]
+        //         let that_time = that.times[j]
+        //         if (this_time[0] > that_time[1] || this_time[1] < that_time[0]) {
+        //             continue
+        //         }
+        //         let this_disc = this.slots[i]?.discipline
+        //         let that_disc = that.slots[j]?.discipline
+        //         if (this_disc && that_disc) {
+        //             let this_teachers = this_disc.getTeachers()
+        //             let that_teachers = that_disc.getTeachers()
+        //             if (this_teachers.filter(t => that_teachers.includes(t)).length) {
+        //                 return true
+        //             }
+        //         }
+        //     }
+        // }
+        // return false
+        if (this.getConflictsWith(that, true).length) {
+            return true
+        }
+        return false
+    }
+
+    getConflictsWith(that, stop_on_first = false) {
+        let intersectTime = (this_slot, that_slot) => {
+            let this_time = this.times[this_slot]
+            let that_time = that.times[that_slot]
+            if (this_time[0] >= that_time[1] || this_time[1] <= that_time[0]) {
+                return false
+            }
+            return true
+        }
+        let getTeachersOnSlot = (day, slot_index) => {
+            let discipline = day.slots[slot_index]?.discipline
+            if (!discipline) {
+                return []
+            }
+            return discipline.getTeachers()
+        }
+        let blocks = []
+        for (let i = 0; i < this.slots.length; i++) {
+            for (let j = 0; j < that.slots.length; j++) {
+                if (!intersectTime(i, j)) {
+                    continue
+                }
+
+                let this_teachers = getTeachersOnSlot(this, i)
+                let that_teachers = getTeachersOnSlot(that, j)
+                if (this_teachers.filter(t => that_teachers.includes(t)).length) {
+                    // console.log(this, this_teachers, that, that_teachers)
+                    if (stop_on_first) {
+                        return [this.slots[i]]
+                    }
+                    blocks.push(this.slots[i])
+                }
+            }
+        }
+        return blocks
+    }
 }
 
 module.exports = Day
