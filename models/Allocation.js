@@ -29,6 +29,12 @@ class Allocation {
         for (let schedule of this.schedules) {
             schedule.allocate()
         }
+        this.solveConflicts()
+
+        this.updateTeachersClasses()
+    }
+
+    solveConflicts() {
         let conflict = this.nextConflict()
         // console.log(conflict)
         while (conflict !== false) {
@@ -42,8 +48,6 @@ class Allocation {
             }
             conflict = this.nextConflict()
         }
-
-        this.updateTeachersClasses()
     }
 
     nextConflict() {
@@ -61,7 +65,8 @@ class Allocation {
 
     updateTeachersClasses() {
         for (let teacher of this.teacherStore.all()) {
-            teacher.clear()
+            teacher.clearClasses()
+            // teacher.name == 'ranieri' ? console.log(teacher) : null
         }
         for (let schedule of this.schedules) {
             schedule.updateTeachersClasses()
@@ -84,6 +89,21 @@ class Allocation {
             score += (3 - workingDays) * 3
         }
         return score
+    }
+
+    clone() {
+        let allocation = new Allocation()
+        for (let schedule of allocation.schedules) {
+            schedule.cloneFrom(this.schedules.find(s => s.class.code == schedule.class.code))
+        }
+        allocation.evolve()
+        allocation.updateTeachersClasses()
+        return allocation
+    }
+
+    evolve() {
+        this.schedules.choice().reallocate()
+        this.solveConflicts()
     }
 
     printTable() {

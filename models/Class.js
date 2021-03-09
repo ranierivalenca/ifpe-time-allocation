@@ -1,5 +1,7 @@
 const classes = require('../classes')
 
+const { WARNINGS } = require('../conf')
+
 const Course = require('./Course')
 const TeacherStore = require('../stores/TeacherStore')
 
@@ -29,7 +31,9 @@ class Class {
             let teachers = disc_teachers[discipline.code]
             if (!teachers) {
                 // console.warn(`Discipline ${discipline.code} in class ${this.code} has no teacher`)
-                console.warn(`Class ${this.code}: discipline ${discipline.code} has no teacher`)
+                if (WARNINGS) {
+                    console.warn(`Class ${this.code}: discipline ${discipline.code} has no teacher`)
+                }
                 continue
             }
             teachers = Array.isArray(teachers) ? teachers : [teachers]
@@ -46,12 +50,19 @@ class Class {
         return this.course.getSlots(this.shift)
     }
 
-    getDisciplineBlocks() {
+    getDisciplinesBlocks() {
         let blocks = []
         for (let discipline of this.disciplines) {
             blocks.push(...discipline.blocks)
         }
         return blocks
+    }
+
+    getDisciplineBlocks(code) {
+        // console.log(code, this.disciplines.find(d => d.code == code))
+        // console.log(this.disciplines.find(d => d.code == code).blocks)
+        return this.disciplines.find(d => d.code == code).blocks
+
     }
 
     startTime() {

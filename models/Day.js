@@ -1,5 +1,7 @@
 class Day {
     constructor(index, slots) {
+        this._id = Math.random().toString(36).substr(2, 9)
+
         let number_of_slots = slots.length
 
         this.index = index
@@ -155,6 +157,17 @@ class Day {
             }
         }
         return blocks
+    }
+
+    cloneFromWith(day, klass) {
+        for (let i = 0; i < this.slots.length; i++) {
+            let slot = day.slots[i]
+            if (slot) {
+                // console.log(day.slots[i].discipline.getTeachers().map(t => t.name + ',' + t._id))
+                this.slots[i] = klass.getDisciplineBlocks(slot.discipline.code)[0]
+                // console.log(this.slots[i].discipline.getTeachers().map(t => t.name + ',' + t._id))
+            }
+        }
     }
 }
 

@@ -2,6 +2,8 @@ const Block = require('./Block')
 
 class Discipline {
     constructor(code, blocks, course = null) {
+        this._id = Math.random().toString(36).substr(2, 9)
+
         this.code = code
         this.course = course
         this.blocks = this.createBlocks(blocks)

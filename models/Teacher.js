@@ -6,6 +6,7 @@ const preferences = require('../teachers')
 
 class Teacher {
     constructor(name) {
+        this._id = Math.random().toString(36).substr(2, 9)
         this.name = name
         this.preferences = this.loadPreferences()
         this.disciplines = new Set()
@@ -34,8 +35,8 @@ class Teacher {
         // process.exit()
     }
 
-    clear() {
-        this.disciplines = new Set()
+    clearClasses() {
+        // this.disciplines = new Set()
         this.classes = []
     }
 

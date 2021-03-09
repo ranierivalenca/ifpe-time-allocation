@@ -4,6 +4,8 @@ const Day = require('./Day')
 
 class Schedule {
     constructor(klass, days = 5) {
+        this._id = Math.random().toString(36).substr(2, 9)
+
         this.class = klass
         this.days = Array(days).fill(null).map((day, index) => {
             return new Day(index, klass.slots)
@@ -12,7 +14,7 @@ class Schedule {
 
     allocate(blocks) {
         if (!blocks) {
-            blocks = this.class.getDisciplineBlocks()
+            blocks = this.class.getDisciplinesBlocks()
         }
 
         blocks.shuffle()
@@ -114,9 +116,16 @@ class Schedule {
                     continue
                 }
                 for (let teacher of slot.discipline.getTeachers()) {
+                    // teacher.name == 'ranieri' ? console.log(teacher) : null
                     teacher.addClass(day, i)
                 }
             }
+        }
+    }
+
+    cloneFrom(schedule) {
+        for (let i = 0; i < this.days.length; i++) {
+            this.days[i].cloneFromWith(schedule.days[i], this.class)
         }
     }
 

@@ -21,6 +21,6 @@ class TeacherStore {
     }
 }
 
-const instance = new TeacherStore()
+// const instance = new TeacherStore()
 
 module.exports = TeacherStore
