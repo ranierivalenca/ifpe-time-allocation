@@ -12,6 +12,10 @@ class TeacherStore {
         return this.teachers[name]
     }
 
+    all() {
+        return Object.values(this.teachers)
+    }
+
     addTeacher(name) {
         this.teachers[name] = new Teacher(name)
     }
@@ -19,4 +23,4 @@ class TeacherStore {
 
 const instance = new TeacherStore()
 
-module.exports = instance
+module.exports = TeacherStore

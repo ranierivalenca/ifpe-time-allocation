@@ -106,6 +106,20 @@ class Schedule {
         this.allocate(deallocated)
     }
 
+    updateTeachersClasses() {
+        for (let day of this.days) {
+            for (let i = 0; i < day.slots.length; i++) {
+                let slot = day.slots[i]
+                if (!slot) {
+                    continue
+                }
+                for (let teacher of slot.discipline.getTeachers()) {
+                    teacher.addClass(day, i)
+                }
+            }
+        }
+    }
+
     printTable() {
         let table = []
         for (let day of this.days) {

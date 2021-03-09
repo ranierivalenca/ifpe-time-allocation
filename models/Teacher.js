@@ -8,6 +8,8 @@ class Teacher {
     constructor(name) {
         this.name = name
         this.preferences = this.loadPreferences()
+        this.disciplines = new Set()
+        this.classes = []
     }
 
     loadPreferences() {
@@ -30,6 +32,36 @@ class Teacher {
         score += prefs.map(pref => pref.score).sum()
         return score
         // process.exit()
+    }
+
+    clear() {
+        this.disciplines = new Set()
+        this.classes = []
+    }
+
+    addDiscipline(discipline) {
+        this.disciplines.add(discipline)
+    }
+
+    addClass(day, slot) {
+        let index = day.index
+        let discipline = day.slots[slot].discipline
+        let from = day.times[slot][0]
+        let to = day.times[slot][1]
+        this.classes.push({
+            index, from, to, discipline
+        })
+    }
+
+    getWorkingDays() {
+        let days = {}
+        for (let klass of Object.values(this.classes)) {
+            if (!days[klass.index]) {
+                days[klass.index] = []
+            }
+            days[klass.index].push(klass)
+        }
+        return days
     }
 }
 

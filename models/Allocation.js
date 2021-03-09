@@ -8,13 +8,14 @@ const classes = require('../classes')
 
 class Allocation {
     constructor() {
+        this.teacherStore = new TeacherStore()
         this.schedules = this.createSchedules()
     }
 
     createSchedules() {
         let schedules = []
         for (let klass_code of Object.keys(classes)) {
-            let klass = new Class(klass_code)
+            let klass = new Class(klass_code, this.teacherStore)
             let schedule = new Schedule(klass)
             schedules.push(schedule)
         }
@@ -41,6 +42,8 @@ class Allocation {
             }
             conflict = this.nextConflict()
         }
+
+        this.updateTeachersClasses()
     }
 
     nextConflict() {
@@ -54,6 +57,33 @@ class Allocation {
             }
         }
         return false
+    }
+
+    updateTeachersClasses() {
+        for (let teacher of this.teacherStore.all()) {
+            teacher.clear()
+        }
+        for (let schedule of this.schedules) {
+            schedule.updateTeachersClasses()
+        }
+        // for (let teacher of this.teacherStore.all()) {
+        //     console.log(teacher.name, Object.keys(teacher.getWorkingDays()))
+        // }
+        // let teacher = this.teacherStore.get('ranieri')
+        // console.dir(teacher.getWorkingDays())
+    }
+
+    score() {
+        let score = 0
+        for (let schedule of this.schedules) {
+            score += schedule.score()
+        }
+        for (let teacher of this.teacherStore.all()) {
+            let workingDays = Object.keys(teacher.getWorkingDays()).length
+            // console.log(teacher.name, workingDays)
+            score += (3 - workingDays) * 3
+        }
+        return score
     }
 
     printTable() {

@@ -4,12 +4,14 @@ const Course = require('./Course')
 const TeacherStore = require('../stores/TeacherStore')
 
 class Class {
-    constructor(code) {
+    constructor(code, teacherStore = false) {
         if (!classes[code]) {
             throw `Class ${code} not found`
         }
 
         let klass = classes[code]
+
+        this.teacherStore = teacherStore ? teacherStore : new TeacherStore()
 
         this.code = code
         this.semester = klass.semester
@@ -32,7 +34,7 @@ class Class {
             }
             teachers = Array.isArray(teachers) ? teachers : [teachers]
             discipline.setTeachers(
-                teachers.map(teacher => TeacherStore.get(teacher))
+                teachers.map(teacher => this.teacherStore.get(teacher))
             )
             disciplines.push(discipline)
         }

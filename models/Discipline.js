@@ -1,8 +1,9 @@
 const Block = require('./Block')
 
 class Discipline {
-    constructor(code, blocks) {
+    constructor(code, blocks, course = null) {
         this.code = code
+        this.course = course
         this.blocks = this.createBlocks(blocks)
         this.teachers = null
     }
@@ -17,6 +18,9 @@ class Discipline {
 
     setTeachers(teachers) {
         this.teachers = teachers
+        teachers.map(teacher => {
+            teacher.addDiscipline(this)
+        })
     }
 
     getTeachers() {

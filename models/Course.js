@@ -29,7 +29,7 @@ class Course {
         }
         let disciplines = []
         for (let [code, blocks] of Object.entries(this.semesters[semester]))  {
-            disciplines.push(new Discipline(code, blocks))
+            disciplines.push(new Discipline(code, blocks, this))
         }
         return disciplines
     }
