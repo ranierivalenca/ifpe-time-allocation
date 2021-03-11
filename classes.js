@@ -62,7 +62,7 @@ module.exports = {
             "intr-adm": ["yuri"],
             "etica": ["willyans"],
             "ingles-i": ["ivo"],
-            "calculo": ["mauricio"],
+            "calculo": ["lincoln"],
         }
     },
     "tsi-2-m": {
@@ -114,9 +114,9 @@ module.exports = {
             "int-logística": ["alexandre-m"],
             "ética": ["willyans"],
             "log-reversa": ["bruno"],
-            "intr-adm": ["alexandre-m"],
+            "intr-adm": ["luiz-henrique"],
             "matemática": ["cicero"],
-            "metodologia": ["danniel"],
+            "metodologia": ["luiz-henrique"],
             "português": ["jefferson"],
             // "proifpe-mat": [],
             // "proifpe-port": [],
@@ -131,9 +131,9 @@ module.exports = {
             "int-logística": ["alexandre-m"],
             "ética": ["willyans"],
             "log-reversa": ["bruno"],
-            "intr-adm": ["alexandre-m"],
+            "intr-adm": ["luiz-henrique"],
             "matemática": ["cicero"],
-            "metodologia": ["danniel"],
+            "metodologia": ["luiz-henrique"],
             "português": ["jefferson"],
             // "proifpe-mat": [],
             // "proifpe-port": [],
@@ -150,7 +150,7 @@ module.exports = {
             "gestão-de-pessoas": ["yuri"],
             "log-transp-dist": ["alexandre-m"],
             "gerenc-e-economia": ["luiz-guim"],
-            "estatística": ["danniel"],
+            "estatística": ["cicero"],
             "inglês": ["ivo"],
         }
     },
@@ -166,7 +166,7 @@ module.exports = {
             "gestão-de-materiais": ["inez"],
             "gestão-da-produção": ["djalma"],
             "inglês-ii": ["ivo"],
-            "scm": ["yuri"],
+            "gestao-cadeia-supr": ["yuri"],
             "tópicos-especiais": ["tarcisio"],
         }
     },
@@ -182,7 +182,7 @@ module.exports = {
             "gestão-de-materiais": ["inez"],
             "gestão-da-produção": ["djalma"],
             "inglês-ii": ["ivo"],
-            "scm": ["yuri"],
+            "gestao-cadeia-supr": ["yuri"],
             "tópicos-especiais": ["tarcisio"],
         }
     },
@@ -205,7 +205,7 @@ module.exports = {
             "intr-adm": ["luiz-guim"],
             "intr-cont": ["michelle"],
             "intr-economia": ["luiz-guim"],
-            "matematica": ["mauricio"],
+            "matematica": ["danniel"],
         }
     },
     "adm-3-m": {
@@ -238,7 +238,7 @@ module.exports = {
             "fund-de-economia": ["luiz-guim"],
             "fundamentos-adm": ["yuri"],
             "intr-a-gest-qual": ["djalma"],
-            "matemática": ["mauricio"],
+            "matemática": ["danniel"],
             "português": ["jefferson"],
             "ética": ["willyans"],
             "informática": ["liliane"],

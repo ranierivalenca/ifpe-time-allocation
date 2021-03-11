@@ -66,7 +66,7 @@ module.exports = {
                 "gestão-da-qualidade": [3],
                 "gestão-de-materiais": [3],
                 "inglês-ii": [2],
-                "scm": [3],
+                "gestao-cadeia-supr": [3],
                 "segurança": [2],
                 "tecn-e-si-log": [2],
                 "tópicos-especiais": [3],
