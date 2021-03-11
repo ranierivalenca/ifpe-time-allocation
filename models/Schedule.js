@@ -10,6 +10,8 @@ class Schedule {
         this.days = Array(days).fill(null).map((day, index) => {
             return new Day(index, klass.slots)
         })
+
+        this._score_cache = false
     }
 
     allocate(blocks) {
@@ -64,10 +66,14 @@ class Schedule {
     }
 
     score() {
+        if (this._score_cache !== false) {
+            return this._score_cache
+        }
         let score = 0
         for (let day of this.days) {
             score += day.score()
         }
+        this._score_cache = score
         return score
     }
 

@@ -10,6 +10,7 @@ class Allocation {
     constructor() {
         this.teacherStore = new TeacherStore()
         this.schedules = this.createSchedules()
+        this._score_cache = false
     }
 
     createSchedules() {
@@ -79,6 +80,9 @@ class Allocation {
     }
 
     score() {
+        if (this._score_cache !== false) {
+            return this._score_cache
+        }
         let score = 0
         for (let schedule of this.schedules) {
             score += schedule.score()
@@ -88,6 +92,7 @@ class Allocation {
             // console.log(teacher.name, workingDays)
             score += (3 - workingDays) * 3
         }
+        this._score_cache = false
         return score
     }
 
@@ -102,6 +107,7 @@ class Allocation {
     }
 
     evolve() {
+        this._score_cache = false
         this.schedules.choice().reallocate()
         this.solveConflicts()
     }

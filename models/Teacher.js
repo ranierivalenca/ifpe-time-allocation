@@ -31,7 +31,7 @@ class Teacher {
                 (end_time >= pref.from && end_time <= pref.to)
         )
         score += prefs.map(pref => pref.score).sum()
-        return score
+        return score * 2
         // process.exit()
     }
 

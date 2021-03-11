@@ -82,7 +82,7 @@ class Day {
     }
 
     score() {
-        let score = 0;
+        let score = 0
         for (let i = 0; i < this.slots.length; i++) {
             let slot = this.slots[i]
             let times = this.times[i]
