@@ -33,6 +33,8 @@ class Allocation {
         this.solveConflicts()
 
         this.updateTeachersClasses()
+
+        return this
     }
 
     solveConflicts() {
@@ -45,7 +47,7 @@ class Allocation {
                 sch1.resolveConflictsWith(sch2)
             } else {
                 // sch2.resolveConflictsWith(sch1) // I can't understand why
-                sch1.reallocate()
+                sch2.reallocate()
             }
             conflict = this.nextConflict()
         }
@@ -96,12 +98,14 @@ class Allocation {
         return score
     }
 
-    clone() {
+    clone(evolve = false) {
         let allocation = new Allocation()
         for (let schedule of allocation.schedules) {
             schedule.cloneFrom(this.schedules.find(s => s.class.code == schedule.class.code))
         }
-        allocation.evolve()
+        if (evolve) {
+            allocation.evolve()
+        }
         allocation.updateTeachersClasses()
         return allocation
     }
