@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900">
+  <div id="app" class="bg-white max-w-5xl m-auto min-h-screen p-2">
+    <div class="w-full">
+      <a
+        class="p-2 border rounded-xl inline-block m-2 bg-gray-100 hover:bg-gray-300"
+        v-for="[file, score] in Object.entries(this.files)"
+        v-on:click="fetchData(file)"
+        href="#"
+      >{{ file }} ({{ score }})</a>
+    </div>
+    <div v-for="[klass, schedule] of Object.entries(data)">
+      <h1 class="text-lg font-bold">{{ klass }}</h1>
+      <div class="grid grid-cols-6">
+        <div>
+          <div>&nbsp;</div>
+          <div
+            v-for="time in schedule.times"
+            class="my-2 border-b border-gray-400"
+          >
+            {{ formatTime(time) }}
+          </div>
+        </div>
+        <div v-for="(day, index) of schedule.slots">
+          <div class="text-center font-bold">{{ index }}</div>
+          <div
+            v-for="slot in day"
+            class="my-2 border-b border-gray-400 text-center"
+            v-bind:class="{'text-indigo-900': slot}"
+          >
+            <!-- <div v-if="slot == null">-</div> -->
+            <span
+              v-for="teacher in slotTeachers(slot)"
+              v-bind:class=teacherClass(teacher)
+            >
+              {{ teacher.split(':')[0] }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let app = new Vue({
+      el: '#app',
+      data: {
+        data: {},
+        files: [],
+        file: false
+      },
+      created() {
+        this.fetchFiles()
+        setInterval(() => {
+          this.fetchFiles()
+          this.fetchData(this.file)
+        }, 1000)
+      },
+      watch: {
+        file: function(val) {
+          this.fetchData(this.file)
+        }
+      },
+      methods: {
+        fetchFiles() {
+          fetch('/available-allocations')
+            .then(data => data.json())
+            .then(data => {
+              this.files = data
+            })
+        },
+        fetchData(file) {
+          if (!file) {
+            return
+          }
+          fetch(`../allocations/${file}`)
+            .then(data => data.json())
+            .then(data => {
+                this.data = data
+            })
+        },
+        formatTime(time) {
+          let [start, end] = time.map(t => `0${Math.round(t*100).toString()}`.substr(-4).match(/../g).join(':'))
+          return `${start} - ${end}`
+        },
+        slotTeachers(slot) {
+          if (!slot) {
+            return '-'
+          }
+          return slot.split(',')
+          // return slot.split(':')[0]
+        },
+        teacherClass(teacher) {
+          let score = teacher.split(':')[1] ?? 1
+          if (score < 0) {
+            return 'text-red-700 font-bold'
+          } else if (score == 0) {
+            return 'text-yellow-500'
+          } else if (score == 1) {
+            return 'text-indigo-700'
+          } else  {
+            return 'text-indigo-700 font-bold'
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>

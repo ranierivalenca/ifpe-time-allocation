@@ -30,11 +30,17 @@ class Discipline {
     }
 
     tableString(day, slot_index) {
-        // let score = this.teachers.map(teacher => {
-        //     return teacher.getScoreFor(day.index, day.times[slot_index][0], day.times[slot_index][1])
-        // }).sum()
-        // let score = 0
-        return `${this.code} (${this.teachers.map(t => t.name)})`
+        let score = this.teachers.map(teacher => {
+            return teacher.getScoreFor(day.index, day.times[slot_index][0], day.times[slot_index][1])
+        }).sum()
+        return `[${score}] ${this.code} (${this.teachers.map(t => t.name)})`
+    }
+
+    jsonString(day, slot_index) {
+        let teachers = this.teachers.map(teacher => {
+            return `${teacher.name}:${teacher.getScoreFor(day.index, day.times[slot_index][0], day.times[slot_index][1])}`
+        })
+        return `${this.code}/${teachers.join(',')}`
     }
 }
 

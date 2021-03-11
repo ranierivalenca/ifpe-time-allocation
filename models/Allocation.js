@@ -122,6 +122,19 @@ class Allocation {
             schedule.printTable()
         }
     }
+
+    toJson() {
+        let json = {score: this.score()}
+        for (let schedule of this.schedules) {
+            let code = schedule.class.code
+            json[code] = {times: schedule.class.slots, slots: schedule.toJson()}
+        }
+        // console.dir(json, {depth: 3})
+        let data = JSON.stringify(json)
+        return data
+        // console.log(data)
+        // process.exit()
+    }
 }
 
 module.exports = Allocation

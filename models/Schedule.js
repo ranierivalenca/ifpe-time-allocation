@@ -154,7 +154,21 @@ class Schedule {
                 inverse_table[j][i] = table[i][j]
             }
         }
+        console.log('score: ' + this.score())
         console.table(inverse_table)
+    }
+
+    toJson() {
+        let table = []
+        for (let day of this.days) {
+            let day_table = []
+            for (let slot of day.slots) {
+                day_table.push(slot)
+            }
+            day_table = day_table.map((block, index) => block ? block.discipline.jsonString(day, index) : null)
+            table.push(day_table)
+        }
+        return table
     }
 }
 
