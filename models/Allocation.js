@@ -46,7 +46,7 @@ class Allocation {
                 // [sch2, sch1] = conflict
                 sch1.resolveConflictsWith(sch2)
             } else {
-                // sch2.resolveConflictsWith(sch1) // I can't understand why
+                // sch2.resolveConflictsWith(sch1) // I can't understand why this doesn't work
                 sch2.reallocate()
             }
             conflict = this.nextConflict()
