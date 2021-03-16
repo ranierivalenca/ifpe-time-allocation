@@ -1,5 +1,7 @@
 const SHIFTS_CODES = {'manha': 1, 'tarde': 2, 'noite': 3}
 
+const fs = require('fs')
+
 const Class = require('./Class')
 const Schedule = require('./Schedule')
 const TeacherStore = require('../stores/TeacherStore')
@@ -24,6 +26,15 @@ class Allocation {
             return SHIFTS_CODES[sch1.class.shift] - SHIFTS_CODES[sch2.class.shift]
         })
         return schedules
+    }
+
+    loadFromJsonFile(file) {
+        let json = JSON.parse(fs.readFileSync(file))
+        for (let schedule of this.schedules) {
+            schedule.loadFromJson(json[schedule.class.code])
+        }
+        this.updateTeachersClasses()
+        return this
     }
 
     allocate() {

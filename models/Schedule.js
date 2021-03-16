@@ -14,6 +14,16 @@ class Schedule {
         this._score_cache = false
     }
 
+    loadFromJson(json_data) {
+        let blocks = this.class.getDisciplinesBlocks()
+        for (let day = 0; day < this.days.length; day++) {
+            blocks = this.days[day].loadFromJsonWith(json_data.slots[day], blocks)
+        }
+        if (blocks.length > 0) {
+            throw blocks
+        }
+    }
+
     allocate(blocks) {
         if (!blocks) {
             blocks = this.class.getDisciplinesBlocks()

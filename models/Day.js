@@ -58,6 +58,49 @@ class Day {
         return block
     }
 
+    loadFromJsonWith(json_day, blocks) {
+        let allocate = (json_block, i_now) => {
+            if (!json_block['disc']) {
+                return
+            }
+            // console.log(json_block)
+            let block_index = blocks.findIndex(b => b.discipline.code == json_block.disc && b.slots == json_block.slots)
+            if (block_index == -1) {
+                // console.error(blocks)
+                return
+            }
+            let block = blocks[block_index]
+            blocks = [...blocks.slice(0, block_index), ...blocks.slice(block_index + 1)]
+            this.allocate(block, i_now - json_block.slots)
+        }
+        let json_blk = {}
+        let i = 0
+        let null_streak = 0
+        for (i = 0; i < json_day.length; i++) {
+            let json_slot = json_day[i]
+            if (json_slot == null) {
+                if (null_streak++ == 0) {
+                    allocate(json_blk, i)
+                    json_blk = {}
+                }
+                continue
+            }
+            null_streak = 0
+            json_slot = json_slot.split('/')[0]
+            if (json_blk['disc'] == json_slot) {
+                json_blk['slots']++
+            } else {
+                allocate(json_blk, i)
+                json_blk = {'disc': json_slot, 'slots': 1}
+            }
+        }
+        if (null_streak == 0) {
+          allocate(json_blk, i)
+        }
+
+        return blocks
+    }
+
     findSlotFor(block, random = true) {
         let cont = 0
         let number_of_slots = block.slots
