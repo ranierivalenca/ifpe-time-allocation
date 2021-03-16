@@ -195,7 +195,7 @@ class Schedule {
             for (let slot of day.slots) {
                 day_table.push(slot)
             }
-            day_table = day_table.map((block, index) => block ? block.discipline.tableString(day, index) : null)
+            day_table = day_table.map((block, index) => block ? block.discipline.tableString(day, index) + '/' + block.slots : null)
             table.push(day_table)
         }
         let inverse_table = []

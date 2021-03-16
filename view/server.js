@@ -19,8 +19,14 @@ app.get('/available-allocations', (req, res) => {
             } catch(e) {
             }
         })
-        console.log(files_list)
-        res.send(files_list)
+        // files_list.sort((f1, f2) => +f1 - +f2)
+        let keys = Object.keys(files_list).sort((f1, f2) => +f1.split('.')[0] - +f2.split('.')[0])
+        let final_list = {}
+        for (let key of keys) {
+            final_list[key] = files_list[key]
+        }
+        console.log(final_list)
+        res.send(final_list)
     })
 })
 
