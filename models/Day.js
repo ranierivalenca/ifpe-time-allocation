@@ -147,7 +147,7 @@ class Day {
 
                 let this_teachers = getTeachersOnSlot(this, i)
                 let that_teachers = getTeachersOnSlot(that, j)
-                if (this_teachers.filter(t => that_teachers.includes(t)).length) {
+                if (this_teachers.filter(t => that_teachers.map(t => t.name).includes(t.name)).length) {
                     // console.log(this, this_teachers, that, that_teachers)
                     if (stop_on_first) {
                         return [this.slots[i]]
@@ -164,7 +164,7 @@ class Day {
             let slot = day.slots[i]
             if (slot) {
                 // console.log(day.slots[i].discipline.getTeachers().map(t => t.name + ',' + t._id))
-                this.slots[i] = klass.getDisciplineBlocks(slot.discipline.code)[0]
+                this.slots[i] = klass.getDisciplineBlocks(slot.discipline.code).find(b => b.slots == slot.slots)
                 // console.log(this.slots[i].discipline.getTeachers().map(t => t.name + ',' + t._id))
             }
         }
