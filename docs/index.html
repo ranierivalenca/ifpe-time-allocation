@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900">
+  <div id="app" class="bg-white max-w-5xl m-auto min-h-screen p-2">
+    <div class="w-full">
+      <a
+        class="p-2 border rounded-xl inline-block m-2 bg-gray-100 hover:bg-gray-300"
+        v-for="[file, score] in Object.entries(this.files)"
+        v-on:click="fetchData(file)"
+        v-bind:class="file == selectedFile ? 'bg-green-300 hover:bg-green-500' : ''"
+        href="#"
+      >{{ file }} ({{ score }})</a>
+    </div>
+    <div class="grid grid-cols-6">
+      <div
+        class="px-2 py-0.5 border rounded-xl m-1 text-center hover:bg-gray-300 cursor-pointer"
+        v-for="teacher of Object.keys(teachersData).sort()"
+        v-bind:class="teacher == selectedTeacher ? 'bg-gray-900 text-white' : ''"
+        v-on:click="selectTeacher(teacher)"
+      >
+        {{teacher}} /
+        {{teacherDays(teacher)}} /
+        <span class="font-bold" v-bind:class="teacherNeutralSlots(teacher) > 0 ? 'text-yellow-500' : ''">{{teacherNeutralSlots(teacher)}}</span> /
+        <span class="font-bold" v-bind:class="teacherBadSlots(teacher) > 0 ? 'text-red-700' : ''">{{teacherBadSlots(teacher)}}</span>
+      </div>
+    </div>
+    <div>Total bad slots: {{teachersBadSlots()}} / neutral slots: {{teachersNeutralSlots()}}</div>
+    <div class="grid grid-cols-6">
+      <div></div>
+      <div v-for="(day, i) of teachersData[selectedTeacher]" class="text-center">
+        <div>{{ DAYS[i] }} ({{day.length}})</div>
+        <div
+          v-for="[time, teacher] in day"
+          v-bind:class="teacherClass(teacher)"
+        >
+          {{formatTime(time)}}
+        </div>
+      </div>
+    </div>
+    <div v-for="[klass, schedule] of Object.entries(data)">
+      <h1 class="text-lg font-bold">{{ klass }}</h1>
+      <div class="grid grid-cols-6">
+        <div>
+          <div>&nbsp;</div>
+          <div
+            v-for="time in schedule.times"
+            class="my-2 border-b border-gray-400 h-14 flex items-center"
+          >
+            {{ formatTime(time) }}
+          </div>
+        </div>
+        <div v-for="(day, index) of schedule.slots">
+          <div class="text-center font-bold">{{ DAYS[index] }}</div>
+          <div
+            v-for="slot in day"
+            class="my-2 border-b border-gray-400 text-center h-14"
+            v-bind:class="{'text-indigo-900': slot}"
+          >
+            <!-- <div v-if="slot == null">-</div> -->
+            <span class="block font-bold capitalize" style="font-variant: small-caps">
+              {{ slotDiscipline(slot) }}
+            </span>
+            <span
+              v-for="teacher in slotTeachers(slot)"
+              class="border border-gray-200 rounded-xl px-2 py-0.5 shadow-sm hover:bg-gray-200 cursor-pointer text-xs"
+              v-bind:class="teacherClass(teacher)"
+              v-on:click="selectTeacher(teacher)"
+            >
+              {{ teacherName(teacher) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let app = new Vue({
+      el: '#app',
+      data: {
+        DAYS: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
+        data: {},
+        teachersData: {},
+        files: [],
+        selectedFile: false,
+        selectedTeacher: false,
+      },
+      created() {
+        this.fetchFiles()
+        // setInterval(() => {
+        //   this.fetchFiles()
+        //   this.fetchData(this.selectedFile)
+        // }, 1000)
+      },
+      methods: {
+        fetchFiles() {
+          // fetch('/available-allocations')
+          //   .then(data => data.json())
+          //   .then(data => {
+          //     this.files = data
+          //   })
+          this.files = {"0.json":680,"1.json":684,"2.json":672,"3.json":679,"4.json":703,"5.json":690,"6.json":682,"7.json":730,"8.json":693,"9.json":698,"10.json":716,"11.json":714,"12.json":709,"13.json":669,"14.json":672,"15.json":722,"16.json":698,"17.json":661,"18.json":674,"19.json":669,"20.json":679,"21.json":611,"22.json":645,"23.json":642,"24.json":654,"25.json":695,"26.json":636,"27.json":645,"28.json":695,"29.json":692}
+        },
+        fetchData(file) {
+          if (!file) {
+            return
+          }
+          this.selectedFile = file
+          fetch(`${file}`)
+            .then(data => data.json())
+            .then(data => {
+                this.data = data
+                this.setTeachersData()
+            })
+        },
+        setTeachersData() {
+          let teachers = {}
+          console.log(this.data)
+          Object.values(this.data).forEach(klass => {
+            if (!klass.times) {
+              return
+            }
+            let times = klass.times
+            let slots = klass.slots
+            for (let day_idx = 0; day_idx < 5; day_idx++) {
+              for (let slot_idx = 0; slot_idx < times.length; slot_idx++) {
+                let slot = slots[day_idx][slot_idx]
+                if (!slot) {
+                  continue
+                }
+                let slot_teachers = this.slotTeachers(slot)
+                // console.log(slot, slot_teachers)
+                slot_teachers.forEach(teacher => {
+                  let name = this.teacherName(teacher)
+                  if (!teachers[name]) {
+                    teachers[name] = Array(5).fill(null).map(d => Array())
+                  }
+                  teachers[name][day_idx].push([times[slot_idx], teacher])
+                })
+          //       for (let teacher of slot_teachers.map(st => this.teacherName(st))) {
+          //         if (teacher == 'ranieri') {
+          //           console.log(day_idx, slot_idx)
+          //         }
+          //         console.log(teacher, slot, times[slot_idx])
+          //         // teachers[teacher][day_idx].push(times[slot_idx])
+          //       }
+              }
+            }
+          })
+          Object.keys(teachers).forEach(name => {
+            for (let i = 0; i < 5; i++) {
+              teachers[name][i].sort((t1, t2) => t1[0][0] - t2[0][0])
+            }
+          })
+          this.teachersData = teachers
+        },
+        teacherBadSlots(name) {
+          let data = this.teachersData[name]
+          if (!data) {
+            return
+          }
+          let badSlots = 0
+          data.forEach(day => {
+            day.forEach(slot => {
+              if (slot[1].split(':')[1] < 0) {
+                badSlots++
+              }
+            })
+          })
+          return badSlots
+        },
+        teacherNeutralSlots(name) {
+          let data = this.teachersData[name]
+          if (!data) {
+            return
+          }
+          let badSlots = 0
+          data.forEach(day => {
+            day.forEach(slot => {
+              if (slot[1].split(':')[1] == 0) {
+                badSlots++
+              }
+            })
+          })
+          return badSlots
+        },
+        teachersBadSlots() {
+          let badSlots = 0
+          for (teacher of Object.keys(this.teachersData)) {
+            badSlots += this.teacherBadSlots(teacher)
+          }
+          return badSlots
+        },
+        teachersNeutralSlots() {
+          let badSlots = 0
+          for (teacher of Object.keys(this.teachersData)) {
+            badSlots += this.teacherNeutralSlots(teacher)
+          }
+          return badSlots
+        },
+        teacherDays(name) {
+          let data = this.teachersData[name]
+          if (!data) {
+            return
+          }
+          let days = 0
+          data.forEach(day => {
+            days += day.length > 0 ? 1 : 0
+          })
+          return days
+        },
+        formatTime(time) {
+          let [start, end] = time.map(t => `0${Math.round(t*100).toString()}`.substr(-4).match(/../g).join(':'))
+          return `${start} - ${end}`
+        },
+        slotDiscipline(slot) {
+          if (!slot) {
+            return ''
+          }
+          return slot.split('/')[0]
+        },
+        slotTeachers(slot) {
+          if (!slot) {
+            return []
+          }
+          return slot.split('/')[1]?.split(',')
+          // return slot.split(':')[0]
+        },
+        teacherClass(teacher) {
+          let score = teacher.split(':')[1] ?? 1
+          let selected = this.teacherName(teacher) == this.selectedTeacher ? 'bg-gray-900' : ''
+          let intensity = selected ? 300 : 700
+          if (score < 0) {
+            return `${selected} text-red-${intensity} font-bold`
+          }
+          if (score == 0) {
+            return `${selected} text-yellow-${intensity}`
+          }
+          if (score == 1) {
+            return `${selected} text-indigo-${intensity}`
+          }
+          return `${selected} text-indigo-${intensity} font-bold`
+        },
+        teacherName(teacher) {
+          return teacher.split(':')[0]
+        },
+        selectTeacher(teacher) {
+          this.selectedTeacher = this.teacherName(teacher)
+        },
+      }
+    })
+  </script>
+</body>
+</html>
