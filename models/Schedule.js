@@ -30,17 +30,40 @@ class Schedule {
                 day = this.findDayFor(block)
             }
             let slot_index = day.findSlotFor(block)
+
+            // if (block) {
+            //     console.log(block, slot_index)
+            //     this.printTable()
+            // }
             day.allocate(block, slot_index)
+            // console.log(block)
+            // this.printTable()
+            // if (i++ == 10) process.exit()
         }
         // process.exit()
     }
 
-    reallocate() {
-        // reset days
-        this.days = Array(this.days.length).fill(null).map((day, index) => {
-            return new Day(index, this.class.slots)
-        })
-        this.allocate()
+    reallocate(partial = false) {
+        if (!partial) {
+            // reset days
+            this.days = Array(this.days.length).fill(null).map((day, index) => {
+                return new Day(index, this.class.slots)
+            })
+            this.allocate()
+        } else {
+            let blocks = this.class.getDisciplinesBlocks()
+            let deallocated = []
+            for (let i = 0; i < +partial * blocks.length; i++) {
+                deallocated.push(this.deallocateWorst())
+                // console.log(deallocated)
+                // this.printTable()
+            }
+            // process.exit()
+            // console.log(deallocated)
+            this.allocate(deallocated)
+            // this.printTable()
+            // process.exit()
+        }
     }
 
     findDayFor(block) {
@@ -53,6 +76,26 @@ class Schedule {
             return false
         }
         return available_days.choice()
+    }
+
+    deallocateWorst() {
+        let days = []
+        for (let day of this.days) {
+            days.push(day)
+        }
+        // console.log(days.map(d => d.slotScores()))
+        days.sort((d1, d2) => d1.badSlotsSum() - d2.badSlotsSum())
+        // console.log(days.map(d => d.slotScores()))
+        // process.exit()
+        // console.log(days)
+        let day = days.shift()
+        while (day.worstAllocatedSlot() == -1 && days.length > 0) {
+            day = days.shift()
+        }
+        // console.log(day.worstAllocatedSlot())
+        // process.exit()
+
+        return this.deallocate(day, day.worstAllocatedSlot())
     }
 
     deallocate(day = null, slot = null) {
@@ -169,6 +212,10 @@ class Schedule {
             table.push(day_table)
         }
         return table
+    }
+
+    nullSlots() {
+        return this.days.map(d => d.slots.filter(s => s == null).length).sum()
     }
 }
 

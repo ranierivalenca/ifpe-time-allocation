@@ -67,6 +67,7 @@ class Allocation {
     }
 
     updateTeachersClasses() {
+        this._score_cache = false
         for (let teacher of this.teacherStore.all()) {
             teacher.clearClasses()
             // teacher.name == 'ranieri' ? console.log(teacher) : null
@@ -112,7 +113,16 @@ class Allocation {
 
     evolve() {
         this._score_cache = false
-        this.schedules.choice().reallocate()
+        let mutateRandomSchedule = () => {
+            this.schedules.choice().reallocate(Math.random())
+            if (Math.random() < 0.6) {
+                mutateRandomSchedule()
+            }
+        }
+        mutateRandomSchedule()
+        // this.schedules[0].reallocate(0.5)
+        // schedules.sort((s1, s2) => s1.score() - s2.score())
+        // schedules.slice(0, schedules.randIndex())
         this.solveConflicts()
     }
 

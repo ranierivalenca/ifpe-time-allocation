@@ -1,3 +1,5 @@
+const { DEFAULT_PREFERENCE_SCORE } = require('../conf')
+
 class Day {
     constructor(index, slots) {
         this._id = Math.random().toString(36).substr(2, 9)
@@ -94,6 +96,51 @@ class Day {
             }
         }
         return score
+    }
+
+    slotScores() {
+        let scores = Array(this.slots.length).fill(null)
+        for (let i = 0; i < this.slots.length; i++) {
+            let slot = this.slots[i]
+            let times = this.times[i]
+            if (slot) {
+                let teachers = slot.discipline.getTeachers()
+                for (let teacher of teachers) {
+                    scores[i] = teacher.getScoreFor(this.index, times[0], times[1])
+                }
+            }
+        }
+        return scores
+    }
+
+    badSlotsSum() {
+        let scores = this.slotScores().filter(s => s != null && s <= DEFAULT_PREFERENCE_SCORE)
+        if (scores.length == 0) {
+            return Infinity
+        }
+        return scores.sum()
+    }
+
+    worstAllocatedSlot() {
+        let worstSlot = -1
+        let worstScore = Infinity
+
+        for (let i = 0; i < this.slots.length; i++) {
+            let slot = this.slots[i]
+            let times = this.times[i]
+            if (slot) {
+                let teachers = slot.discipline.getTeachers()
+                let score = 0
+                for (let teacher of teachers) {
+                    score += teacher.getScoreFor(this.index, times[0], times[1])
+                }
+                if (score < worstScore) {
+                    worstScore = score
+                    worstSlot = i
+                }
+            }
+        }
+        return worstSlot
     }
 
     hasConflictWith(that) {
